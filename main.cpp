@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
     A[N-1][N-1] = 3*alpha/(dx*dx) + beta[N-1];
     A[N-1][N-2] = -alpha/(dx*dx);
 
+    /* Compute eigen values and vectors */
     EigenDecomposition(A, N, EigVectors, EigValues, iterations);
 
     /* Print results */
