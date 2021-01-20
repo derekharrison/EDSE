@@ -7,8 +7,35 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include "main.hpp"
 #include "Memory.hpp"
+#include "User_types.hpp"
 
+void set_matrix(double** A, d_data domain_data, p_params physical_params, s_data *solver_data) {
+
+    double alpha = physical_params.h*physical_params.h/2/physical_params.m;
+    double dx = domain_data.L/domain_data.N;
+    int N = domain_data.N;
+
+    /* Initialize and set A */
+    for(int i = 0; i < N; ++i)
+        for(int j = 0; j < N; ++j) {
+            A[i][j] = 0.0;
+        }
+
+    /* First node */
+    A[0][0] = 3*alpha/(dx*dx) + V(physical_params, solver_data->x_p[0]);
+    A[0][1] = -alpha/(dx*dx);
+    /* Central nodes */
+    for(int i = 1; i < N - 1; ++i) {
+        A[i][i-1] = -alpha/(dx*dx);
+        A[i][i] = 2*alpha/(dx*dx) + V(physical_params, solver_data->x_p[i]);
+        A[i][i+1] = -alpha/(dx*dx);
+    }
+    /* Last node */
+    A[N-1][N-1] = 3*alpha/(dx*dx) + V(physical_params, solver_data->x_p[N-1]);
+    A[N-1][N-2] = -alpha/(dx*dx);
+}
 
 void MatMult(double** A, int rows1, int columns1, double** B, int rows2, int columns2, double** result) {
     /*

@@ -8,6 +8,9 @@
 #ifndef MATRIXOPS_H_
 #define MATRIXOPS_H_
 
+#include "User_types.hpp"
+
+void set_matrix(double** A, d_data domain_data, p_params physical_params, s_data *solver_data);
 void MatTranspose(double** A, int rows, int columns, double** result);
 void VectorNormalization(double *wp, int sizeVec);
 void MatMult(double** A, int rows1, int columns1, double** B, int rows2, int columns2, double** result);
