@@ -10,6 +10,7 @@
 
 #include "User_types.hpp"
 
+void norm_eig_vec(double** EigVectors, int N, d_data domain_data);
 void set_matrix(double** A, d_data domain_data, p_params physical_params, s_data *solver_data);
 void MatTranspose(double** A, int rows, int columns, double** result);
 void VectorNormalization(double *wp, int sizeVec);

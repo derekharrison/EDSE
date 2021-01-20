@@ -49,19 +49,7 @@ void solver(d_data domain_data, p_params physical_params, s_data* solver_data) {
     EigenDecomposition(A, N, EigVectors, EigValues, iterations);
 
     /* Normalize eigen vectors */
-    double *sum_vec = new double[N];
-    for(int j = 0; j < N; ++j) {
-        sum_vec[j] = 0.0;
-        for(int i = 0; i < N; ++i) {
-            sum_vec[j] += EigVectors[i][j]*EigVectors[i][j]*dx;
-        }
-    }
-
-    for(int j = 0; j < N; ++j) {
-        for(int i = 0; i < N; ++i) {
-            EigVectors[i][j] = EigVectors[i][j]/sqrt(sum_vec[j]);
-        }
-    }
+    norm_eig_vec(EigVectors, N, domain_data);
 
     if(print_verification_results) {
         /* Verify computation of eigen vectors */

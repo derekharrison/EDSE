@@ -11,6 +11,23 @@
 #include "Memory.hpp"
 #include "User_types.hpp"
 
+void norm_eig_vec(double** EigVectors, int N, d_data domain_data) {
+    double *sum_vec = new double[N];
+    double dx = domain_data.L/domain_data.N;
+    for(int j = 0; j < N; ++j) {
+        sum_vec[j] = 0.0;
+        for(int i = 0; i < N; ++i) {
+            sum_vec[j] += EigVectors[i][j]*EigVectors[i][j]*dx;
+        }
+    }
+
+    for(int j = 0; j < N; ++j) {
+        for(int i = 0; i < N; ++i) {
+            EigVectors[i][j] = EigVectors[i][j]/sqrt(sum_vec[j]);
+        }
+    }
+}
+
 void set_matrix(double** A, d_data domain_data, p_params physical_params, s_data *solver_data) {
 
     double alpha = physical_params.h*physical_params.h/2/physical_params.m;
