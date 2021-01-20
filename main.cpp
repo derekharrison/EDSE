@@ -21,10 +21,10 @@
 
 double V(p_params physical_params, double x) {
     /* Potential */
-    double f = 0.5*physical_params.m*physical_params.omega*
-                   physical_params.omega*x*x;
+	double m = physical_params.m;
+	double omega = physical_params.omega;
 
-    return f;
+    return 0.5*m*omega*omega*x*x;
 }
 
 int main(int argc, char* argv[]) {

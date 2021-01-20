@@ -17,7 +17,7 @@
 
 void solver(d_data domain_data, p_params physical_params, s_data* solver_data) {
 
-    double **A, **EigVectors, **Vec, *EigValues, L, h, m, omega;
+    double **A, **EigVectors, **Vec, *EigValues, L;
     int N, iterations;
     bool print_verification_results;
 
@@ -25,20 +25,14 @@ void solver(d_data domain_data, p_params physical_params, s_data* solver_data) {
     N = domain_data.N;
     L = domain_data.L;
 
-    h = physical_params.h;
-    m = physical_params.m;
-    omega = physical_params.omega;
-
     iterations = 5000;
     print_verification_results = false;
 
     /* Some calculations */
     double dx = L/N;
-    double *x_p = new double[N];
 
     /* Compute x_p */
     for(int i = 0; i < N; ++i) {
-        x_p[i] = i*dx + 0.5*dx - 0.5*L;
         solver_data->x_p[i] = i*dx + 0.5*dx - 0.5*L;
     }
 
@@ -76,30 +70,10 @@ void solver(d_data domain_data, p_params physical_params, s_data* solver_data) {
         printf("Verify computation\n");
         for(int i = 0; i < N; ++i) {
             for(int j = 0; j < N; ++j) {
-                printf("ratio: %f, ", Vec[i][j]/(EigVectors[i][j] + 1e-20));
+                printf("ratio: %f, ", (Vec[i][j]/(EigVectors[i][j] + 1e-20))/EigValues[j]);
             }
             printf("\n");
         }
-    }
-
-    /* Compare with analytical solutions of first three energy levels */
-    double *vec_ana = new double[N];
-    double *vec_ana_1 = new double[N];
-    double *vec_ana_2 = new double[N];
-    for(int i = 0; i < N; ++i) {
-        vec_ana[i] = pow(m*omega/(M_PI*h),0.25)*exp(-m*omega*x_p[i]*x_p[i]/(2*h));
-        vec_ana_1[i] = -pow(m*omega/(M_PI*h),0.25)*sqrt(2*m*omega/h)*x_p[i]*exp(-m*omega*x_p[i]*x_p[i]/(2*h));
-        vec_ana_2[i] = -(1-2*m*omega*x_p[i]*x_p[i]/h)*exp(-m*omega*x_p[i]*x_p[i]/(2*h));
-    }
-
-    /* Normalize analytical solution level 2 */
-    double sum_ana = 0.0;
-    for(int i = 0; i < N; ++i) {
-        sum_ana += vec_ana_2[i]*vec_ana_2[i]*dx;
-    }
-
-    for(int i = 0; i < N; ++i) {
-        vec_ana_2[i] = vec_ana_2[i]/sqrt(sum_ana);
     }
 
     /* Set results */
@@ -115,12 +89,9 @@ void solver(d_data domain_data, p_params physical_params, s_data* solver_data) {
     std::string file_name = "data.txt";
     file.open(file_name);
     for(int i = 0; i < N; ++i) {
-    file << x_p[i] << " "
-         << vec_ana[i] << " "
+    file << solver_data->x_p[i] << " "
          << EigVectors[i][N-1] << " "
-         << vec_ana_1[i] << " "
          << EigVectors[i][N-2] << " "
-         << vec_ana_2[i] << " "
          << EigVectors[i][N-3] << "\n";
     }
     file.close();
